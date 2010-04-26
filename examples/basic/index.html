@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+	<script type="text/javascript" src="../../base64.js"></script>
+	<script type="text/javascript" src="../../json.js"></script>
+	<script type="text/javascript" src="../../invoicible-javascript.js"></script>
+	<script type="text/javascript">
+		
+		var invoicible = InvoicibleBasic({
+			domain: "test.example.com:8000",
+			protocol: "http",
+			user: "mirek",
+			pass: "123456"
+		});
+		
+		// ----------------------------------
+		// Clients
+		//
+		invoicible.customers.load(onCustomersLoad);
+		function onCustomersLoad() {
+			// this function is scoped to invoicible.customers object
+			this.forEach(function(obj, params) {
+				console.log("CUSTOMER [name: " + obj.name + "]");
+			});
+			
+			this.all()[0].name = "Janek Testowy & Co.";
+			this.all()[0].save();
+		}
+		
+		// ----------------------------------
+		// Invoices
+		//
+		invoicible.invoices.load(onInvoicesLoad);
+		function onInvoicesLoad() {
+			// this function is scoped to invoicible.invoices object
+			this.forEach(function(invoice, params) {
+				Log.log("INVOICE [summary: " + invoice.summary + "]");
+			});
+			
+			this.all()[0].comments.load(function() {
+				Log.log("Comments " + this.all().length);
+				this.forEach(function(comment, params) {
+					Log.log("COMMENT [summary: " + comment.summary + "]");
+				});
+			});
+			
+			this.new({
+				summary: "Kip im et bej 2",
+				auto_numbering: true,
+				customer_uri: invoicible.customers.all()[1].resource_uri,
+				language: "pl",
+				invoice_type: "regular",
+				date_raised: "2010-04-14",
+				currency_symbol: "PLN",
+				date: "2010-04-04",
+				payment_due: "15"
+			}, function(invoice) {
+				Log.log("Total invoices: " + invoicible.invoices.all().length);
+				invoice.del(function() {
+					Log.log("Total invoices after del: " + invoicible.invoices.all().length);
+				});
+			});
+			
+			
+			var inv = this.all()[0];
+			inv.summary = "Gerrary hirr 2";
+			inv.save();
+		}
+		
+		
+		// ----------------------------------
+		// Estimates
+		//
+		invoicible.estimates.load(onEstimatesLoad);
+		function onEstimatesLoad() {
+			// this function is scoped to invoicible.estimates object
+			this.forEach(function(obj, params) {
+				console.log("ESTIMATE [summary: " + obj.summary + "]");
+			});			
+		}
+	</script>
+</head>
+<body>
+</body>
+</html>
