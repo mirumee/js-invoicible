@@ -72,12 +72,12 @@ InvoicibleBasic = (function() {
 		};
 		
 		/**
-		 * It adds some convienience methods to API collections.
+		 * Adds some convenience methods to API collections.
 		 *
 		 * obj - collection parent
 		 * propName - collection name
 		 * uri - API URI address to fetch collections data from
-		 * onLoad - function called each time new data is loaded
+		 * onDataLoad - function called each time new data is loaded
 		 **/
 		I._decorateAsyncCollection = function(obj, propName, uri, onDataLoad) {
 			obj[propName] = {};
