@@ -31,7 +31,7 @@
 		// ----------------------------------
 		// Invoices
 		//
-		invoicible.invoices.load(onInvoicesLoad);
+		invoicible.invoices.load(onInvoicesLoad, null, {startDate: "2010-04-25", limit: 2});
 		function onInvoicesLoad() {
 			// this function is scoped to invoicible.invoices object
 			this.forEach(function(invoice, params) {

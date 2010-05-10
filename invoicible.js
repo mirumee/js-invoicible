@@ -60,10 +60,12 @@ InvoicibleBasic = (function() {
 					if (xhr.status == 200 || xhr.status == 204)
 					{
 						Log.debug("Success.");
-						settings.onSuccess(xhr);
+						if (settings.onSuccess)
+							settings.onSuccess(xhr);
 					} else {
 						Log.debug("Error status: " + xhr.status);
-						settings.onFail(xhr);
+						if (settings.onFail)
+							settings.onFail(xhr);
 					}
 					
 				}
@@ -82,8 +84,31 @@ InvoicibleBasic = (function() {
 		I._decorateAsyncCollection = function(obj, propName, uri, onDataLoad) {
 			obj[propName] = {};
 			var target = obj[propName];
-			target.load = function(onSuccess, onFail) {
-				_call({ uri: uri,
+			/**
+			 * It loads all the resources and overwrites local cache
+			 * array avaliable under all() getter.
+			 *
+			 * Parameters:
+			 * offset - Index of the first requested element
+			 * limit - Number of elements to fetch
+			 * startDate - 'Y-m-d' ie. 2010-01-20
+			 * endDate - 'Y-m-d' ie. 2010-01-30
+			 *
+			 * NOTE:
+			 *	When you pass both offset/limit and startDate/endDate 
+			 *	options, API will first filter your invoices
+			 *	against date window and then limit resulted subset
+			 *	to requested offset/limit.
+			 **/
+			target.load = function(onSuccess, onFail, filters) {
+				var filters = filters || {};
+				var _uri = uri + "?" +
+					(filters.startDate ? "start=" + filters.startDate: "") + "&" +
+					(filters.endDate ? "end=" + filters.endDate: "") + "&" +
+					(filters.limit ? "limit=" + filters.limit: "") + "&" +
+					(filters.offset ? "offset=" + filters.offset: "");
+					
+				_call({ uri: _uri,
 					onSuccess: function(xhr) {
 						target["_" + propName] = JSON.parse(xhr.responseText);
 						
@@ -118,7 +143,7 @@ InvoicibleBasic = (function() {
 					onSuccess: function(xhr) {
 						var invoice = JSON.parse(xhr.responseText);
 						I._decorateCollectionItem(invoice, target);
-						Log.log("New resource created: " + invoice.resource_uri);
+						Log.log("New resource createlod: " + invoice.resource_uri);
 						target["_" + propName].push(invoice);
 						onSuccess.call(invoice, invoice);
 					},
@@ -157,8 +182,8 @@ InvoicibleBasic = (function() {
 				});
 			};
 			
-			// Helper removeing object from local array only.
-			// To delete it from your account use del()
+			// Helper removing object from local array.
+			// To delete it from your remote account use del()
 			obj._disposeFromCollection = function() {
 				var cache = collection.all();
 				for (var i = 0; i<cache.length && cache[i] != obj; i++);
