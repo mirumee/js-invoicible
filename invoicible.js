@@ -104,8 +104,8 @@ InvoicibleBasic = (function() {
 			target.load = function(onSuccess, onFail, filters) {
 				var filters = filters || {};
 				var _uri = uri + "?" +
-					(filters.dateFrom ? "dateFrom=" + filters.startDate: "") + "&" +
-					(filters.dateTo ? "dateTo=" + filters.endDate: "") + "&" +
+					(filters.dateFrom ? "date_from=" + filters.startDate: "") + "&" +
+					(filters.dateTo ? "date_to=" + filters.endDate: "") + "&" +
 					(filters.limit ? "limit=" + filters.limit: "") + "&" +
 					(filters.offset ? "offset=" + filters.offset: "");
 					
