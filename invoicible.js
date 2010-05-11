@@ -26,6 +26,7 @@ InvoicibleBasic = (function() {
 				return null;
 			}
 			
+
 		Log.log("New invoicible object created: " + _settings);
 		
 		// Initialize application settings
@@ -103,8 +104,8 @@ InvoicibleBasic = (function() {
 			target.load = function(onSuccess, onFail, filters) {
 				var filters = filters || {};
 				var _uri = uri + "?" +
-					(filters.startDate ? "start=" + filters.startDate: "") + "&" +
-					(filters.endDate ? "end=" + filters.endDate: "") + "&" +
+					(filters.dateFrom ? "dateFrom=" + filters.startDate: "") + "&" +
+					(filters.dateTo ? "dateTo=" + filters.endDate: "") + "&" +
 					(filters.limit ? "limit=" + filters.limit: "") + "&" +
 					(filters.offset ? "offset=" + filters.offset: "");
 					
